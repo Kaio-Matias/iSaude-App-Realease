@@ -21,12 +21,12 @@ export function CustomButton({
     switch (variant) {
       case 'secondary': return '#7F5CE1';
       case 'outline': return 'transparent';
-      default: return '#01AEA4'; // Cor principal do iSaúde
+      default: return '#rgba(69, 118, 242, 1)'; // Cor principal do iSaúde
     }
   };
 
   const getTextColor = () => {
-    if (variant === 'outline') return '#01AEA4';
+    if (variant === 'outline') return '#rgba(69, 118, 242, 1)';
     return '#FFFFFF';
   };
 
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   },
   borderOutline: {
     borderWidth: 1,
-    borderColor: '#01AEA4',
+    borderColor: '#rgba(69, 118, 242, 1)',
   },
   text: {
     fontSize: 16,

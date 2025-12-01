@@ -34,8 +34,15 @@ export default function PersonalInformationFormPacient() {
   const [showSmsModal, setShowSmsModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
-  // Validação básica
-  const isValid = nome.trim().length > 0 && cpf.length >= 14 && email.includes('@') && telefone.length >= 14;
+  // Validação corrigida (baseada em números reais)
+  const rawCpf = cpf.replace(/\D/g, '');
+  const rawTelefone = telefone.replace(/\D/g, '');
+
+  const isValid = 
+    nome.trim().length > 2 && 
+    rawCpf.length === 11 && 
+    email.includes('@') && 
+    rawTelefone.length >= 10;
 
   // Funções de Formatação
   const formatCpf = (value: string) => {
@@ -66,12 +73,9 @@ export default function PersonalInformationFormPacient() {
 
     // Navegar para o próximo passo (Dados Básicos)
     router.push("/register/pacient/basic-info");
-    // console.log("Navegar para Dados Básicos");
   };
 
   const handleVerifyCode = (code: string) => {
-    // console.log("Código verificado:", code);
-    // Simulação de verificação
     setShowSmsModal(false);
     setIsVerified(true);
     Alert.alert("Sucesso", "Telefone verificado com sucesso!", [
@@ -146,15 +150,27 @@ export default function PersonalInformationFormPacient() {
             />
           </View>
 
-          <View style={styles.legalTextContainer}>
-            <Text style={styles.legalText}>
-              Ao continuar você concorda com nossos{" "}
-              <CustomLink inline variant="black" onPress={() => console.log('Termos')}>Termos de Uso</CustomLink>
-              {" "}e{" "}
-              <CustomLink inline variant="black" onPress={() => console.log('Politica')}>Política de Privacidade</CustomLink>
-              .
-            </Text>
-          </View>
+         <View style={styles.legalTextContainer}>
+  <Text style={styles.legalText}>
+    Ao continuar você concorda com nossos{" "}
+    <CustomLink 
+      inline 
+      variant="black" 
+      onPress={() => router.push('/terms-polity/terms-of-use')} // Link atualizado
+    >
+      Termos de Uso
+    </CustomLink>
+    {" "}e{" "}
+    <CustomLink 
+      inline 
+      variant="black" 
+      onPress={() => router.push('/terms-polity/privacy-policy')} // Link atualizado
+    >
+      Política de Privacidade
+    </CustomLink>
+    .
+  </Text>
+</View>
         </ScrollView>
       </KeyboardAvoidingView>
 

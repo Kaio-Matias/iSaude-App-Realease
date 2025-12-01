@@ -32,7 +32,15 @@ export default function PersonalInformationFormProfessional() {
   const [showSmsModal, setShowSmsModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
-  const isValid = nome.trim().length > 0 && cpf.length >= 14 && email.includes('@') && telefone.length >= 14;
+  // Validação corrigida (baseada em números reais)
+  const rawCpf = cpf.replace(/\D/g, '');
+  const rawTelefone = telefone.replace(/\D/g, '');
+
+  const isValid = 
+    nome.trim().length > 2 && 
+    rawCpf.length === 11 && 
+    email.includes('@') && 
+    rawTelefone.length >= 10;
 
   const formatCpf = (value: string) => {
     const cleaned = value.replace(/\D/g, "").slice(0, 11);
@@ -65,7 +73,6 @@ export default function PersonalInformationFormProfessional() {
   };
 
   const handleVerifyCode = (code: string) => {
-    // console.log("Código verificado:", code);
     setShowSmsModal(false);
     setIsVerified(true);
     Alert.alert("Sucesso", "Telefone verificado com sucesso!", [

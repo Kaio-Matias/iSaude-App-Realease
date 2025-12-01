@@ -30,7 +30,15 @@ export default function PersonalInformationFormClinic() {
   const [showSmsModal, setShowSmsModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
-  const isValid = nome.trim().length > 0 && cpf.length >= 14 && email.includes('@') && telefone.length >= 14;
+  // Lógica de validação corrigida (baseada em números reais)
+  const rawCpf = cpf.replace(/\D/g, '');
+  const rawTelefone = telefone.replace(/\D/g, '');
+
+  const isValid = 
+    nome.trim().length > 2 && 
+    rawCpf.length === 11 && 
+    email.includes('@') && 
+    rawTelefone.length >= 10;
 
   const formatCpf = (value: string) => {
     const cleaned = value.replace(/\D/g, "").slice(0, 11);
@@ -95,7 +103,7 @@ export default function PersonalInformationFormClinic() {
                     onChangeText={(text) => setCpf(formatCpf(text))}
                     keyboardType="numeric"
                 />
-                <CustomLink variant="muted" icon="chevron-right" style={styles.helpLink}>
+                <CustomLink variant="muted" icon="chevron-right" style={styles.helpLink} onPress={() => Alert.alert("Informação", "CPF do representante legal.")}>
                     Por que pedimos seu CPF?
                 </CustomLink>
             </View>

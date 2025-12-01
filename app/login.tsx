@@ -191,6 +191,6 @@ const styles = StyleSheet.create({
     footerLink: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#01AEA4', // Cor primária
+        color: 'rgba(69, 118, 242, 1)', // Cor primária
     },
 });
