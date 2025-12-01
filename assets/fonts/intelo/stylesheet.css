@@ -1,0 +1,192 @@
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-ThinItalic.eot');
+    src: local('Intelo Thin Italic'), local('Intelo-ThinItalic'),
+        url('Intelo-ThinItalic.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-ThinItalic.woff2') format('woff2'),
+        url('Intelo-ThinItalic.woff') format('woff'),
+        url('Intelo-ThinItalic.ttf') format('truetype');
+    font-weight: 100;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Intelo Hairline';
+    src: url('Intelo-HairlineItalic.eot');
+    src: local('Intelo Hairline Italic'), local('Intelo-HairlineItalic'),
+        url('Intelo-HairlineItalic.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-HairlineItalic.woff2') format('woff2'),
+        url('Intelo-HairlineItalic.woff') format('woff'),
+        url('Intelo-HairlineItalic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Intelo Hairline';
+    src: url('Intelo-Hairline.eot');
+    src: local('Intelo Hairline'), local('Intelo-Hairline'),
+        url('Intelo-Hairline.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-Hairline.woff2') format('woff2'),
+        url('Intelo-Hairline.woff') format('woff'),
+        url('Intelo-Hairline.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-Thin.eot');
+    src: local('Intelo Thin'), local('Intelo-Thin'),
+        url('Intelo-Thin.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-Thin.woff2') format('woff2'),
+        url('Intelo-Thin.woff') format('woff'),
+        url('Intelo-Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-Medium.eot');
+    src: local('Intelo Medium'), local('Intelo-Medium'),
+        url('Intelo-Medium.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-Medium.woff2') format('woff2'),
+        url('Intelo-Medium.woff') format('woff'),
+        url('Intelo-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-Light.eot');
+    src: local('Intelo Light'), local('Intelo-Light'),
+        url('Intelo-Light.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-Light.woff2') format('woff2'),
+        url('Intelo-Light.woff') format('woff'),
+        url('Intelo-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Intelo Extra';
+    src: url('Intelo-ExtraBoldItalic.eot');
+    src: local('Intelo Extra Bold Italic'), local('Intelo-ExtraBoldItalic'),
+        url('Intelo-ExtraBoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-ExtraBoldItalic.woff2') format('woff2'),
+        url('Intelo-ExtraBoldItalic.woff') format('woff'),
+        url('Intelo-ExtraBoldItalic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-Bold.eot');
+    src: local('Intelo Bold'), local('Intelo-Bold'),
+        url('Intelo-Bold.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-Bold.woff2') format('woff2'),
+        url('Intelo-Bold.woff') format('woff'),
+        url('Intelo-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-BoldItalic.eot');
+    src: local('Intelo Bold Italic'), local('Intelo-BoldItalic'),
+        url('Intelo-BoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-BoldItalic.woff2') format('woff2'),
+        url('Intelo-BoldItalic.woff') format('woff'),
+        url('Intelo-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-Italic.eot');
+    src: local('Intelo Italic'), local('Intelo-Italic'),
+        url('Intelo-Italic.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-Italic.woff2') format('woff2'),
+        url('Intelo-Italic.woff') format('woff'),
+        url('Intelo-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-LightItalic.eot');
+    src: local('Intelo Light Italic'), local('Intelo-LightItalic'),
+        url('Intelo-LightItalic.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-LightItalic.woff2') format('woff2'),
+        url('Intelo-LightItalic.woff') format('woff'),
+        url('Intelo-LightItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Intelo Semi';
+    src: url('Intelo-SemiBold.eot');
+    src: local('Intelo Semi Bold'), local('Intelo-SemiBold'),
+        url('Intelo-SemiBold.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-SemiBold.woff2') format('woff2'),
+        url('Intelo-SemiBold.woff') format('woff'),
+        url('Intelo-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-MediumItalic.eot');
+    src: local('Intelo Medium Italic'), local('Intelo-MediumItalic'),
+        url('Intelo-MediumItalic.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-MediumItalic.woff2') format('woff2'),
+        url('Intelo-MediumItalic.woff') format('woff'),
+        url('Intelo-MediumItalic.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Intelo Extra';
+    src: url('Intelo-ExtraBold.eot');
+    src: local('Intelo Extra Bold'), local('Intelo-ExtraBold'),
+        url('Intelo-ExtraBold.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-ExtraBold.woff2') format('woff2'),
+        url('Intelo-ExtraBold.woff') format('woff'),
+        url('Intelo-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Intelo Semi';
+    src: url('Intelo-SemiBoldItalic.eot');
+    src: local('Intelo Semi Bold Italic'), local('Intelo-SemiBoldItalic'),
+        url('Intelo-SemiBoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-SemiBoldItalic.woff2') format('woff2'),
+        url('Intelo-SemiBoldItalic.woff') format('woff'),
+        url('Intelo-SemiBoldItalic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Intelo';
+    src: url('Intelo-Regular.eot');
+    src: local('Intelo'), local('Intelo-Regular'),
+        url('Intelo-Regular.eot?#iefix') format('embedded-opentype'),
+        url('Intelo-Regular.woff2') format('woff2'),
+        url('Intelo-Regular.woff') format('woff'),
+        url('Intelo-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
