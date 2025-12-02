@@ -10,14 +10,16 @@ import { CustomInput } from '@/components/ui/CustomInput';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 
+import { UserData } from '@/components/UserData';
+
 const TIPOS_UNIDADE = ['Clínica Médica', 'Hospital', 'Laboratório', 'Consultório', 'Centro de Diagnóstico', 'Outro'];
 
 export default function InstitutionalInformationFormClinic() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [cnpj, setCnpj] = useState('');
-  const [nomeFantasia, setNomeFantasia] = useState('');
-  const [tipoUnidade, setTipoUnidade] = useState('Clínica Médica');
+  const [cnpj, setCnpj] = useState(UserData.cnpj || '');
+  const [nomeFantasia, setNomeFantasia] = useState(UserData.nomeFantasia || '');
+  const [tipoUnidade, setTipoUnidade] = useState(UserData.tipoUnidade || 'Clínica Médica');
 
   const isValid = cnpj.length >= 18 && nomeFantasia.trim().length > 0;
 
@@ -32,6 +34,13 @@ export default function InstitutionalInformationFormClinic() {
 
   const handleNext = () => {
     if (!isValid) return;
+    
+    // --- INTEGRAÇÃO ---
+    UserData.cnpj = cnpj;
+    UserData.nomeFantasia = nomeFantasia;
+    UserData.tipoUnidade = tipoUnidade;
+    // ------------------
+
     router.push('/register/clinic/unity-info');
   };
 

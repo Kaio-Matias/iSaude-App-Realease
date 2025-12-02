@@ -17,19 +17,28 @@ import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { CustomDateInput } from "@/components/ui/CustomDateInput";
 
+// Lógica
+import { UserData } from "@/components/UserData";
+
 const GENDER_OPTIONS = ["Masculino", "Feminino", "Outro", "Prefiro não dizer"];
 
 export default function BasicInformationFormProfessional() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [selectedOption, setSelectedOption] = useState("Masculino");
-  const [birthDate, setBirthDate] = useState("");
+  const [selectedOption, setSelectedOption] = useState(UserData.genero || "Masculino");
+  const [birthDate, setBirthDate] = useState(UserData.dataNascimento || "");
 
   const isValid = selectedOption && birthDate.length === 10;
 
   const handleNext = () => {
     if (!isValid) return;
+
+    // --- INTEGRAÇÃO ---
+    UserData.genero = selectedOption;
+    UserData.dataNascimento = birthDate;
+    // ------------------
+
     // Rota DIFERENTE: vai para informações profissionais
     router.push("/register/professional/professional-info");
   };

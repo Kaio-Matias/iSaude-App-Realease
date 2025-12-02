@@ -8,29 +8,72 @@ import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, FlatList, Image, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '@/src/services/api'; // Import da sua API
 
-
+// Interface para o User
+interface UserProfile {
+  id: number;
+  nome: string;
+  email: string;
+  ft_perfil?: string;
+  tipo_usuario?: string;
+}
 
 export default function HomeScreen() {
-  // Placeholder: integrar com backend / async storage depois
   const [isValidated] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [unreadNotifications, setUnreadNotifications] = useState<number>(0);
+  const [user, setUser] = useState<UserProfile | null>(null); // Estado do Utilizador
   const { updateBadge } = useTabBadges();
 
+  // Carregar dados iniciais
   useEffect(() => {
+    loadUserData();
     loadPosts();
     updateUnreadCounts();
-  }, [updateBadge]);
+  }, []);
 
-  // Recarregar posts quando a tela receber foco (volta da tela de criar post)
   useFocusEffect(
     useCallback(() => {
+      loadUserData(); // Recarrega user data se mudar (ex: editou perfil)
       loadPosts();
       updateUnreadCounts();
-    }, [updateBadge])
+    }, [])
   );
+
+  // Nova função para carregar dados do utilizador
+  const loadUserData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        // Adiciona o token ao cabeçalho das requisições
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        // Busca os dados do perfil (ajuste a rota conforme seu backend: /user/profile ou /user)
+        // Se o backend exigir ID, você precisaria ter salvo o ID no login ou ter um endpoint /me
+        // Vou assumir uma rota genérica /user que retorna dados do token ou lista
+        // Se o seu backend GetUser.ts retorna uma lista, precisaremos filtrar ou ajustar.
+        // Pelo GetUser.ts que vi, ele aceita ?id=... ou pega todos.
+        // Vamos tentar pegar o user atual se você salvou o ID no login, senão precisaremos decodificar o token.
+        
+        // SOLUÇÃO TEMPORÁRIA: Se salvou userData no login, usa ele.
+        // Se não, vamos tentar chamar a API.
+        
+        const savedUser = await AsyncStorage.getItem('userData');
+        if (savedUser) {
+             setUser(JSON.parse(savedUser));
+        } else {
+            // Se não tiver salvo, tenta buscar (ajuste conforme sua rota real)
+             // const response = await api.get('/user/me'); 
+             // setUser(response.data);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao carregar usuário:", error);
+    }
+  };
 
   const loadPosts = () => {
     setPosts(storageService.getPosts());
@@ -38,23 +81,19 @@ export default function HomeScreen() {
 
   const updateUnreadCounts = () => {
     const notifications = notificationService.getUnreadCount();
-    
     setUnreadNotifications(notifications);
-    
-    // Atualizar badge da tab home com notificações não lidas
     updateBadge('home', notifications);
   };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    loadUserData();
     loadPosts();
     updateUnreadCounts();
     setTimeout(() => setRefreshing(false), 1000);
   }, []);
 
   const handleLike = (postId: string) => {
-    // O PostCard já gerencia seu próprio estado de like
-    // Não precisamos atualizar a lista aqui para evitar flickering
     console.log('Like no post:', postId);
   };
 
@@ -70,10 +109,7 @@ export default function HomeScreen() {
     />
   );
 
-
-
   const handleStoryCreated = () => {
-    // Stories são automaticamente recarregadas pelo StoriesSection
     loadPosts();
     console.log('Story criado!');
   };
@@ -99,13 +135,6 @@ export default function HomeScreen() {
 
   const ListHeader = () => (
     <>
-      {/* {!isValidated && (
-        <TouchableOpacity style={styles.validationBanner} onPress={() => router.push('/validacao/pre-validacao')} activeOpacity={0.8}>
-          <Text style={styles.validationTitle}>Você ainda não poderá oferecer serviços.</Text>
-          <Text style={styles.validationSubtitle}>A verificação de seus documentos profissionais é necessária para começar a atender pelo iSaúde.</Text>
-          <View style={styles.progressBar}><View style={styles.progressFill} /></View>
-        </TouchableOpacity>
-      )} */}
       {renderStoriesAndTabs()}
     </>
   );
@@ -126,9 +155,18 @@ export default function HomeScreen() {
           </TouchableOpacity>
           <NotificationBadge count={unreadNotifications} />
         </View>
-        <TouchableOpacity style={styles.profileButton}>
+        
+        <TouchableOpacity style={styles.profileButton} onPress={() => {
+            // Opcional: Navegar para perfil
+            // router.push('/profile');
+            Alert.alert("Perfil", `Olá, ${user?.nome || 'Visitante'}`);
+        }}>
           <Image 
-            source={{ uri: 'https://api.dicebear.com/7.x/avataaars/png?seed=SeuFlash&backgroundColor=4576F2&size=100' }} 
+            source={{ 
+                uri: user?.ft_perfil 
+                    ? user.ft_perfil 
+                    : 'https://api.dicebear.com/7.x/avataaars/png?seed=User&backgroundColor=E2E8F0' 
+            }} 
             style={styles.profileImage}
           />
         </TouchableOpacity>
@@ -137,26 +175,19 @@ export default function HomeScreen() {
   );
 
   const handleCreateNote = () => {
-    console.log('Criar nota');
-    // Navegar para tela de criar nota (sem abrir modal)
     router.push('./post/create-note');
   };
 
   const handleCreateMedia = () => {
-    console.log('Criar post com fotos/vídeos');
-    // Navegar para a mesma tela mas com modal de galeria aberto
     router.push('./post/create-note?gallery=true');
   };
 
   const handleCreatePulse = () => {
-    console.log('Criar pulse');
-    // TODO: Funcionalidade em desenvolvimento
     Alert.alert('Em breve', 'A funcionalidade Pulse estará disponível em breve!');
   };
 
   const NotificationBadge = ({ count }: { count: number }) => {
     if (count === 0) return null;
-
     return (
       <View style={styles.badge}>
         <Text style={styles.badgeText}>
@@ -179,7 +210,6 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       />
       
-      {/* Botão de Criar Post */}
       <CreatePostButton
         onCreateNote={handleCreateNote}
         onCreateMedia={handleCreateMedia}
@@ -211,12 +241,6 @@ const styles = StyleSheet.create({
     height: 32,
     marginRight: 8,
   },
-  appTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#4576F2',
-    letterSpacing: -0.5,
-  },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -236,6 +260,7 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 12,
     overflow: 'hidden',
+    backgroundColor: '#E2E8F0', // Cor de fundo caso a imagem falhe
   },
   profileImage: {
     width: '100%',
@@ -243,18 +268,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   feedContent: { paddingBottom: 32, paddingTop: 0 },
-  validationBanner: {backgroundColor: '#FFFFFF',borderBottomColor: '#E5EAF0', borderBottomWidth: StyleSheet.hairlineWidth,paddingHorizontal: 18, paddingTop: 14, paddingBottom: 10,},
-  validationTitle: { fontSize: 13, fontWeight: '600', color: '#1E2532' },
-  validationSubtitle: { fontSize: 12, lineHeight: 16, color: '#4A5463' },
-  progressBar: { height: 3, backgroundColor: '#E2E8F0', borderRadius: 2, marginTop: 10, overflow: 'hidden' },
-  progressFill: { width: '25%', height: '100%', backgroundColor: '#3366FF' },
   tabsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
     gap: 8,
     marginTop: 4,
-    marginRight: 16, // Alinha com a margem direita do feed (16px)
+    marginRight: 16,
     paddingVertical: 8,
   },
   tabButtonActive: {

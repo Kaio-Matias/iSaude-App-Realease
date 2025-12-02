@@ -18,6 +18,9 @@ import { Stepper } from "@/components/ui/Stepper";
 import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomInput } from "@/components/ui/CustomInput";
 
+// Lógica
+import { UserData } from "@/components/UserData";
+
 const SUGESTOES = [
   "dr.silva",
   "drsilva.med",
@@ -29,13 +32,18 @@ export default function UserInformationFormProfessional() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(UserData.username || "");
   const [isFocused, setIsFocused] = useState(false);
 
   const isValid = username.trim().length > 0;
 
   const handleNext = () => {
     if (!isValid) return;
+    
+    // --- INTEGRAÇÃO ---
+    UserData.username = username;
+    // ------------------
+
     // Segue para a criação de senha
     router.push("/register/professional/password-info");
   };

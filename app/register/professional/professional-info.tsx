@@ -1,93 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { 
   View, 
   Text, 
   ScrollView, 
   KeyboardAvoidingView, 
   Platform, 
-  StyleSheet,
-  Alert 
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Feather } from '@expo/vector-icons';
+  StyleSheet 
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Componentes
-import { BackHeader } from '@/components/ui/BackHeader';
-import { Stepper } from '@/components/ui/Stepper';
-import { CustomInput } from '@/components/ui/CustomInput';
-import { CustomButton } from '@/components/ui/CustomButton';
-import { CustomSelect } from '@/components/ui/CustomSelect';
-import { CustomLink } from '@/components/ui/CustomLink';
+import { BackHeader } from "@/components/ui/BackHeader";
+import { Stepper } from "@/components/ui/Stepper";
+import { CustomButton } from "@/components/ui/CustomButton";
+import { CustomInput } from "@/components/ui/CustomInput";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
-// Constantes de Dados
-const AREAS = ['Médico', 'Enfermeiro', 'Psicólogo', 'Nutricionista', 'Outro'];
+// Lógica
+import { UserData } from "@/components/UserData";
 
-const ESTADOS = [
-  'Acre', 'Alagoas', 'Amapá', 'Amazonas', 'Bahia', 'Ceará', 'Distrito Federal',
-  'Espírito Santo', 'Goiás', 'Maranhão', 'Mato Grosso', 'Mato Grosso do Sul',
-  'Minas Gerais', 'Pará', 'Paraíba', 'Paraná', 'Pernambuco', 'Piauí',
-  'Rio de Janeiro', 'Rio Grande do Norte', 'Rio Grande do Sul', 'Rondônia',
-  'Roraima', 'Santa Catarina', 'São Paulo', 'Sergipe', 'Tocantins'
+const AREAS_ATUACAO = [
+  "Médico(a)",
+  "Enfermeiro(a)",
+  "Fisioterapeuta",
+  "Psicólogo(a)",
+  "Nutricionista",
+  "Dentista",
+  "Outro"
 ];
 
-const ESPECIALIDADES_MEDICAS = [
-  'Alergologia', 'Anestesiologia', 'Angiologia', 'Cardiologia', 'Cirurgia Geral', 
-  'Clínica Médica', 'Dermatologia', 'Endocrinologia', 'Gastroenterologia', 
-  'Geriatria', 'Ginecologia e Obstetrícia', 'Neurologia', 'Oftalmologia', 
-  'Ortopedia', 'Pediatria', 'Psiquiatria', 'Radiologia', 'Urologia', 'Outro'
-];
-
-const ESPECIALIDADES_PSI = [
-  'Psicologia Clínica', 'Psicologia Organizacional', 'Psicopedagogia', 'Neuropsicologia', 'Outro'
-];
-
-const ESPECIALIDADES_ENF = [
-  'Enfermagem Geral', 'Enfermagem Obstétrica', 'Enfermagem Pediátrica', 'Outro'
-];
-
-const ESPECIALIDADES_NUTRI = [
-  'Nutrição Clínica', 'Nutrição Esportiva', 'Nutrição Funcional', 'Outro'
-];
-
-const REGISTRO_LABELS: Record<string, string> = {
-  'Médico': 'Conselho Regional de Medicina (CRM)',
-  'Enfermeiro': 'Conselho Regional de Enfermagem (COREN)',
-  'Psicólogo': 'Conselho Regional de Psicologia (CRP)',
-  'Nutricionista': 'Conselho Regional de Nutrição (CRN)',
-  'Outro': 'Número de Registro Profissional',
-};
-
-export default function ProfessionalInformationForm() {
+export default function ProfessionalInfoForm() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [area, setArea] = useState('Médico');
-  const [registro, setRegistro] = useState('');
-  const [estado, setEstado] = useState('São Paulo');
-  const [especialidade, setEspecialidade] = useState('');
+  const [area, setArea] = useState(UserData.areaAtuacao || "Médico(a)");
+  const [registro, setRegistro] = useState(UserData.registroProfissional || "");
 
-  const isValid = registro.trim().length > 0 && especialidade.trim().length > 0;
-
-  const getEspecialidades = (selectedArea: string) => {
-    switch (selectedArea) {
-      case 'Médico': return ESPECIALIDADES_MEDICAS;
-      case 'Psicólogo': return ESPECIALIDADES_PSI;
-      case 'Enfermeiro': return ESPECIALIDADES_ENF;
-      case 'Nutricionista': return ESPECIALIDADES_NUTRI;
-      default: return ['Outro'];
-    }
-  };
+  const isValid = area && registro.length >= 4;
 
   const handleNext = () => {
     if (!isValid) return;
-    // Segue para o Passo 4: Usuário
-    router.push('/register/professional/user-info');
+    
+    // --- SALVAR DADOS ---
+    UserData.areaAtuacao = area;
+    UserData.registroProfissional = registro;
+    // --------------------
+
+    router.push("/register/professional/user-info");
   };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <BackHeader title="Nova Conta" />
+      <BackHeader title="Profissional" />
       <Stepper totalSteps={5} currentStep={3} />
       
       <KeyboardAvoidingView 
@@ -100,52 +66,26 @@ export default function ProfessionalInformationForm() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.formContainer}>
-            <Text style={styles.title}>Informações Profissionais</Text>
+            <Text style={styles.title}>Dados Profissionais</Text>
             <Text style={styles.subtitle}>
-              Para oferecer seus serviços em nossa plataforma e assegurar a segurança e credibilidade na comunidade iSaúde, precisamos confirmar suas credenciais.
+              Informe sua área de atuação e seu registro profissional para validação.
             </Text>
             
             <CustomSelect
-              label="Qual sua área de atuação?"
+              label="Área de Atuação"
               value={area}
-              options={AREAS}
-              onSelect={(val) => {
-                setArea(val);
-                setEspecialidade(''); // Limpa especialidade ao mudar área
-              }}
+              options={AREAS_ATUACAO}
+              onSelect={setArea}
+            />
+            
+            <CustomInput
+              label="Nº Registro Profissional (CRM, COREN, etc)"
+              placeholder="Ex: 123456-SP"
+              value={registro}
+              onChangeText={setRegistro}
+              icon={<Feather name="briefcase" size={18} color="#A0AEC0" />}
             />
 
-            <View style={styles.inputGroup}>
-                <CustomInput
-                    label={REGISTRO_LABELS[area] || REGISTRO_LABELS['Outro']}
-                    value={registro}
-                    onChangeText={setRegistro}
-                    placeholder="Ex: 12345"
-                    keyboardType="numeric"
-                    icon={<Feather name="credit-card" size={20} color="#A0AEC0" />}
-                />
-                <CustomLink 
-                    variant="primary" 
-                    onPress={() => Alert.alert("Informação", "Este número será verificado junto ao conselho de classe.")}
-                    style={styles.helpLink}
-                >
-                    Por que pedimos essa informação?
-                </CustomLink>
-            </View>
-
-            <CustomSelect
-              label="Estado de Atuação"
-              value={estado}
-              options={ESTADOS}
-              onSelect={setEstado}
-            />
-
-            <CustomSelect
-              label="Qual sua Especialidade?"
-              value={especialidade}
-              options={getEspecialidades(area)}
-              onSelect={setEspecialidade}
-            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -166,7 +106,7 @@ export default function ProfessionalInformationForm() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   scrollContent: {
     flexGrow: 1,
@@ -182,23 +122,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    color: '#6B7280',
     fontSize: 16,
+    color: '#718096',
     marginBottom: 24,
     lineHeight: 22,
-  },
-  inputGroup: {
-    marginBottom: 8,
-  },
-  helpLink: {
-    marginTop: -8,
-    marginBottom: 16,
-    alignSelf: 'flex-start',
   },
   footer: {
     paddingHorizontal: 24,
     paddingTop: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopWidth: 1,
     borderTopColor: '#f3f4f6',
   },

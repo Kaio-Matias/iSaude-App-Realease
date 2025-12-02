@@ -18,6 +18,9 @@ import { Stepper } from "@/components/ui/Stepper";
 import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomInput } from "@/components/ui/CustomInput";
 
+// Lógica de Dados
+import { UserData } from "@/components/UserData";
+
 const SUGESTOES = [
   "maria.gen",
   "mariagen174",
@@ -29,7 +32,7 @@ export default function UserInformationFormPacient() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(UserData.username || "");
   const [isFocused, setIsFocused] = useState(false);
 
   const isValid = username.trim().length > 0;
@@ -37,6 +40,10 @@ export default function UserInformationFormPacient() {
   const handleNext = () => {
     if (!isValid) return;
     
+    // --- LÓGICA INTEGRADA ---
+    UserData.username = username;
+    // ------------------------
+
     // Navegar para o Passo 4: Senha
     router.push("/register/pacient/password-info");
   };
@@ -137,19 +144,17 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     lineHeight: 22,
   },
-  // Estilos do Ícone @
   atIcon: {
     fontSize: 16,
     fontWeight: '600',
     marginRight: 4,
   },
   atIconActive: {
-    color: '#01AEA4', // Cor primária (substituindo o azul do original para consistência)
+    color: '#01AEA4', 
   },
   atIconInactive: {
     color: '#A0AEC0',
   },
-  // Estilos das Sugestões
   suggestionsContainer: {
     marginTop: 8,
   },

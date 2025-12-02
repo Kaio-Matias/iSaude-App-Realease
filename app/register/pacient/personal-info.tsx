@@ -20,15 +20,18 @@ import { Stepper } from "@/components/ui/Stepper";
 import { CustomLink } from "@/components/ui/CustomLink";
 import { SmsVerificationModal } from "@/components/ui/SmsVerificationModal";
 
+// Lógica de Dados
+import { UserData } from "@/components/UserData"; 
+
 export default function PersonalInformationFormPacient() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
   // Estados do Formulário
-  const [nome, setNome] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
+  const [nome, setNome] = useState(UserData.nome || "");
+  const [cpf, setCpf] = useState(UserData.cpf || "");
+  const [email, setEmail] = useState(UserData.email || "");
+  const [telefone, setTelefone] = useState(UserData.telefone || "");
   
   // Estados de Controle
   const [showSmsModal, setShowSmsModal] = useState(false);
@@ -71,15 +74,33 @@ export default function PersonalInformationFormPacient() {
       return;
     }
 
+    // --- LÓGICA INTEGRADA: Salvar dados temporariamente ---
+    UserData.nome = nome;
+    UserData.cpf = cpf;
+    UserData.email = email;
+    UserData.telefone = telefone;
+    // ------------------------------------------------------
+
     // Navegar para o próximo passo (Dados Básicos)
     router.push("/register/pacient/basic-info");
   };
 
   const handleVerifyCode = (code: string) => {
+    // Aqui você poderia validar o código com o backend se tivesse um endpoint de SMS
     setShowSmsModal(false);
     setIsVerified(true);
     Alert.alert("Sucesso", "Telefone verificado com sucesso!", [
-        { text: "OK", onPress: () => router.push("/register/pacient/basic-info") }
+      { 
+        text: "OK", 
+        onPress: () => {
+            // Salva e avança automaticamente após verificar
+            UserData.nome = nome;
+            UserData.cpf = cpf;
+            UserData.email = email;
+            UserData.telefone = telefone;
+            router.push("/register/pacient/basic-info");
+        } 
+      }
     ]);
   };
 
@@ -150,27 +171,27 @@ export default function PersonalInformationFormPacient() {
             />
           </View>
 
-         <View style={styles.legalTextContainer}>
-  <Text style={styles.legalText}>
-    Ao continuar você concorda com nossos{" "}
-    <CustomLink 
-      inline 
-      variant="black" 
-      onPress={() => router.push('/terms-polity/terms-of-use')} // Link atualizado
-    >
-      Termos de Uso
-    </CustomLink>
-    {" "}e{" "}
-    <CustomLink 
-      inline 
-      variant="black" 
-      onPress={() => router.push('/terms-polity/privacy-policy')} // Link atualizado
-    >
-      Política de Privacidade
-    </CustomLink>
-    .
-  </Text>
-</View>
+          <View style={styles.legalTextContainer}>
+            <Text style={styles.legalText}>
+              Ao continuar você concorda com nossos{" "}
+              <CustomLink 
+                inline 
+                variant="black" 
+                onPress={() => router.push('/terms-polity/terms-of-use')}
+              >
+                Termos de Uso
+              </CustomLink>
+              {" "}e{" "}
+              <CustomLink 
+                inline 
+                variant="black" 
+                onPress={() => router.push('/terms-polity/privacy-policy')} 
+              >
+                Política de Privacidade
+              </CustomLink>
+              .
+            </Text>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -221,7 +242,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   helpLink: {
-    marginTop: -8, // Aproxima o link do input acima
+    marginTop: -8, 
     marginBottom: 16,
     alignSelf: 'flex-start',
   },

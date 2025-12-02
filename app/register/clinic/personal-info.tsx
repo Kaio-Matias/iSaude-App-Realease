@@ -19,18 +19,22 @@ import { Stepper } from "@/components/ui/Stepper";
 import { CustomLink } from "@/components/ui/CustomLink";
 import { SmsVerificationModal } from "@/components/ui/SmsVerificationModal";
 
+// Lógica
+import { UserData } from "@/components/UserData";
+
 export default function PersonalInformationFormClinic() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [nome, setNome] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
+  // Carrega dados existentes caso o usuário volte
+  const [nome, setNome] = useState(UserData.nome || "");
+  const [cpf, setCpf] = useState(UserData.cpf || "");
+  const [email, setEmail] = useState(UserData.email || "");
+  const [telefone, setTelefone] = useState(UserData.telefone || "");
+  
   const [showSmsModal, setShowSmsModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
-  // Lógica de validação corrigida (baseada em números reais)
   const rawCpf = cpf.replace(/\D/g, '');
   const rawTelefone = telefone.replace(/\D/g, '');
 
@@ -60,10 +64,19 @@ export default function PersonalInformationFormClinic() {
 
   const handleContinue = () => {
     if (!isValid) return;
+
     if (!isVerified) {
       setShowSmsModal(true);
       return;
     }
+
+    // --- INTEGRAÇÃO ---
+    UserData.nome = nome;
+    UserData.cpf = cpf;
+    UserData.email = email;
+    UserData.telefone = telefone;
+    // ------------------
+
     router.push("/register/clinic/basic-info");
   };
 
@@ -71,7 +84,16 @@ export default function PersonalInformationFormClinic() {
     setShowSmsModal(false);
     setIsVerified(true);
     Alert.alert("Sucesso", "Telefone verificado com sucesso!", [
-        { text: "OK", onPress: () => router.push("/register/clinic/basic-info") }
+        { 
+            text: "OK", 
+            onPress: () => {
+                UserData.nome = nome;
+                UserData.cpf = cpf;
+                UserData.email = email;
+                UserData.telefone = telefone;
+                router.push("/register/clinic/basic-info");
+            }
+        }
     ]);
   };
 
@@ -84,7 +106,7 @@ export default function PersonalInformationFormClinic() {
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.formContainer}>
             <Text style={styles.title}>Vamos começar sua jornada!</Text>
-            <Text style={styles.subtitle}>Precisamos dos dados do representante para criar a conta.</Text>
+            <Text style={styles.subtitle}>Precisamos dos dados do representante legal para criar a conta.</Text>
 
             <CustomInput
               label="Nome Completo"
@@ -103,7 +125,7 @@ export default function PersonalInformationFormClinic() {
                     onChangeText={(text) => setCpf(formatCpf(text))}
                     keyboardType="numeric"
                 />
-                <CustomLink variant="muted" icon="chevron-right" style={styles.helpLink} onPress={() => Alert.alert("Informação", "CPF do representante legal.")}>
+                <CustomLink variant="muted" icon="chevron-right" style={styles.helpLink} onPress={() => Alert.alert("Informação", "O CPF do representante é necessário para a validação legal.")}>
                     Por que pedimos seu CPF?
                 </CustomLink>
             </View>

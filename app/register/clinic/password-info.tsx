@@ -10,6 +10,8 @@ import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomInput } from "@/components/ui/CustomInput";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
+import { UserData } from "@/components/UserData";
+
 export default function PasswordInformationFormClinic() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -51,6 +53,11 @@ export default function PasswordInformationFormClinic() {
         return;
     }
     setErro("");
+    
+    // --- INTEGRAÇÃO ---
+    UserData.senha = senha;
+    // ------------------
+
     router.push("/register/clinic/confirm-register");
   };
 

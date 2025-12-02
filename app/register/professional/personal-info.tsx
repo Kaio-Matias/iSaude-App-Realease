@@ -20,19 +20,22 @@ import { Stepper } from "@/components/ui/Stepper";
 import { CustomLink } from "@/components/ui/CustomLink";
 import { SmsVerificationModal } from "@/components/ui/SmsVerificationModal";
 
+// Lógica
+import { UserData } from "@/components/UserData";
+
 export default function PersonalInformationFormProfessional() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [nome, setNome] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
+  const [nome, setNome] = useState(UserData.nome || "");
+  const [cpf, setCpf] = useState(UserData.cpf || "");
+  const [email, setEmail] = useState(UserData.email || "");
+  const [telefone, setTelefone] = useState(UserData.telefone || "");
   
   const [showSmsModal, setShowSmsModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
-  // Validação corrigida (baseada em números reais)
+  // Validação
   const rawCpf = cpf.replace(/\D/g, '');
   const rawTelefone = telefone.replace(/\D/g, '');
 
@@ -68,7 +71,13 @@ export default function PersonalInformationFormProfessional() {
       return;
     }
 
-    // Rota para o próximo passo do Profissional
+    // --- INTEGRACAO: Salvar dados ---
+    UserData.nome = nome;
+    UserData.cpf = cpf;
+    UserData.email = email;
+    UserData.telefone = telefone;
+    // ------------------------------
+
     router.push("/register/professional/basic-info");
   };
 
@@ -76,7 +85,16 @@ export default function PersonalInformationFormProfessional() {
     setShowSmsModal(false);
     setIsVerified(true);
     Alert.alert("Sucesso", "Telefone verificado com sucesso!", [
-        { text: "OK", onPress: () => router.push("/register/professional/basic-info") }
+        { 
+          text: "OK", 
+          onPress: () => {
+            UserData.nome = nome;
+            UserData.cpf = cpf;
+            UserData.email = email;
+            UserData.telefone = telefone;
+            router.push("/register/professional/basic-info");
+          } 
+        }
     ]);
   };
 

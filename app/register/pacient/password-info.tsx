@@ -18,6 +18,9 @@ import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomInput } from "@/components/ui/CustomInput";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
+// Lógica de Dados
+import { UserData } from "@/components/UserData";
+
 export default function PasswordInformationFormPacient() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -81,9 +84,14 @@ export default function PasswordInformationFormPacient() {
     }
     
     setErro("");
-    // Navegar para a tela de confirmação final
+    
+    // --- LÓGICA INTEGRADA: Salvar senha ---
+    UserData.senha = senha;
+    // -------------------------------------
+
+    // Navegar para a tela de confirmação final (que vai chamar a API)
+    // OBS: Certifique-se de usar o código de 'confirm-register.tsx' que gerei na resposta anterior
     router.push("/register/pacient/confirm-register");
-    // console.log("Senha criada com sucesso!");
   };
 
   return (
@@ -117,7 +125,7 @@ export default function PasswordInformationFormPacient() {
               icon={<Feather name="lock" size={18} color="#A0AEC0" />}
             />
 
-            {/* Lista de Critérios (só mostra se houver erro ou senha digitada mas incompleta) */}
+            {/* Lista de Critérios */}
             {senha.length > 0 && !(strength === 2 && allCriteriaMet) && (
               <View style={styles.criteriaContainer}>
                 <Text style={styles.criteriaTitle}>
@@ -198,7 +206,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     lineHeight: 22,
   },
-  // Estilos de Critérios
   criteriaContainer: {
     marginTop: -8,
     marginBottom: 16,
@@ -217,7 +224,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginLeft: 4,
   },
-  // Estilos de Força da Senha
   strengthContainer: {
     flexDirection: 'row',
     alignItems: 'center',

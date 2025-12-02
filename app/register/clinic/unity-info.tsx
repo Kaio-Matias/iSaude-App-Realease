@@ -9,13 +9,20 @@ import { Stepper } from "@/components/ui/Stepper";
 import { CustomInput } from "@/components/ui/CustomInput";
 import { CustomButton } from "@/components/ui/CustomButton";
 
+import { UserData } from "@/components/UserData";
+
 export default function UnityInformationFormClinic() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [email, setEmail] = useState("");
-  const [telefones, setTelefones] = useState([""]);
+  const [email, setEmail] = useState(UserData.emailUnidade || "");
+  const [telefones, setTelefones] = useState(UserData.telefonesUnidade || [""]);
 
   const handleNext = () => {
+    // --- INTEGRAÇÃO ---
+    UserData.emailUnidade = email;
+    UserData.telefonesUnidade = telefones.filter(t => t.trim() !== "");
+    // ------------------
+
     router.push("/register/clinic/password-info");
   };
 
@@ -103,7 +110,7 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: 16, color: '#718096', marginBottom: 24 },
   sectionLabel: { fontSize: 16, fontWeight: '600', color: '#2D3748', marginBottom: 8, marginTop: 8 },
   phoneRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  removeButton: { marginLeft: 12, marginTop: 45, padding: 8 }, // Ajuste para alinhar com o input
+  removeButton: { marginLeft: 12, marginTop: 45, padding: 8 }, 
   addButton: { flexDirection: 'row', alignItems: 'center', padding: 12, justifyContent: 'center', borderWidth: 1, borderColor: '#01AEA4', borderRadius: 8, marginTop: 8, borderStyle: 'dashed' },
   addButtonText: { color: '#01AEA4', fontWeight: '600', marginLeft: 8 },
   footer: { paddingHorizontal: 24, paddingTop: 16, backgroundColor: "#fff", borderTopWidth: 1, borderTopColor: '#f3f4f6' },

@@ -17,6 +17,9 @@ import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomInput } from "@/components/ui/CustomInput";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
+// Lógica
+import { UserData } from "@/components/UserData";
+
 export default function PasswordInformationFormProfessional() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -79,6 +82,11 @@ export default function PasswordInformationFormProfessional() {
     }
     
     setErro("");
+
+    // --- INTEGRAÇÃO ---
+    UserData.senha = senha;
+    // ------------------
+
     // Finaliza e vai para a tela de confirmação
     router.push("/register/professional/confirm-register");
   };

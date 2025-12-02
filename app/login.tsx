@@ -6,16 +6,22 @@ import {
   ImageBackground, 
   StyleSheet, 
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Componentes Customizados
 import { CustomInput } from '@/components/ui/CustomInput';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { CustomModal } from '@/components/ui/CustomModal';
+
+// Integração API
+import api from '@/src/services/api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,18 +33,65 @@ export default function LoginScreen() {
     const [cpfCnpj, setCpfCnpj] = useState("");
     const [senha, setSenha] = useState("");
     const [modalVisible, setModalVisible] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const handleNavigateToRegister = () => {
         setModalVisible(false);
-        // ✅ Conexão feita: Navega para a tela inicial de registo (onde escolhe Paciente ou Profissional)
+        // Navega para a tela inicial de registo
         router.push('/register'); 
     };
 
-    const handleLogin = () => {
-        // Lógica de login simulada
-        console.log("Login efetuado");
-        // ✅ Conexão feita: Redireciona para o Feed Principal (Home)
-        router.replace('/(tabs)/home');
+    const handleLogin = async () => {
+        // Validação básica
+        if (!cpfCnpj || !senha) {
+            Alert.alert("Atenção", "Por favor, preencha todos os campos.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // Monta o objeto de login
+            // O backend espera 'email' e 'password'. 
+            // Enviamos o cpfCnpj no campo 'email' pois o backend costuma usar esse campo como identificador principal.
+            const payload = {
+                email: cpfCnpj, 
+                password: senha
+            };
+
+            // Chamada à API (Rota correta: /user/login)
+            const response = await api.post('/user/login', payload);
+
+            console.log("Login efetuado com sucesso:", response.data);
+
+            // Salvar o token retornado para manter a sessão
+            if (response.data.token) {
+                await AsyncStorage.setItem('userToken', response.data.token);
+                // Se quiser salvar mais dados do utilizador (nome, id, role), pode fazer aqui:
+                // await AsyncStorage.setItem('userData', JSON.stringify(response.data.user));
+            }
+
+            setModalVisible(false);
+            // Redireciona para a Home
+            router.replace('/(tabs)/home');
+
+        } catch (error: any) {
+            console.error("Erro no login:", error);
+            
+            let message = "Não foi possível entrar. Verifique suas credenciais.";
+
+            if (error.response) {
+                // Erro vindo do servidor (ex: Senha incorreta, Usuário não encontrado)
+                message = error.response.data.message || error.response.data.error || message;
+            } else if (error.request) {
+                // Erro de conexão (sem internet ou servidor fora do ar)
+                message = "Sem conexão com o servidor. Verifique sua internet.";
+            }
+
+            Alert.alert("Erro de Login", message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -75,12 +128,12 @@ export default function LoginScreen() {
                     </Text>
                     
                     <CustomInput
-                        label="CPF ou CNPJ"
-                        placeholder="Digite seu CPF ou CNPJ aqui"
+                        label="Email, CPF ou CNPJ"
+                        placeholder="Digite seu login aqui"
                         value={cpfCnpj}
                         onChangeText={setCpfCnpj}
-                        icon={<Feather name="credit-card" size={18} color="#A0AEC0" />}
-                        keyboardType="numeric"
+                        icon={<Feather name="user" size={18} color="#A0AEC0" />}
+                        autoCapitalize="none"
                     />
                     
                     <CustomInput
@@ -96,7 +149,7 @@ export default function LoginScreen() {
                         <TouchableOpacity 
                             onPress={() => {
                                 setModalVisible(false);
-                                // router.push('/forgot-password'); // TODO: Criar tela de recuperação de senha se necessário
+                                // router.push('/forgot-password'); // Implementar tela de recuperação se necessário
                                 console.log("Esqueci senha");
                             }}
                             style={styles.linkButton}
@@ -108,9 +161,10 @@ export default function LoginScreen() {
 
                     <CustomButton 
                         onPress={handleLogin} 
-                        icon={<Feather name="arrow-right" size={20} color="white" />}
+                        disabled={loading}
+                        icon={!loading ? <Feather name="arrow-right" size={20} color="white" /> : undefined}
                     >
-                        Continuar
+                        {loading ? <ActivityIndicator color="#FFF" /> : "Continuar"}
                     </CustomButton>
 
                     <View style={styles.footerContainer}>

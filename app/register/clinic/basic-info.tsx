@@ -10,18 +10,26 @@ import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { CustomDateInput } from "@/components/ui/CustomDateInput";
 
+import { UserData } from "@/components/UserData";
+
 const GENDER_OPTIONS = ["Masculino", "Feminino", "Outro", "Prefiro não dizer"];
 
 export default function BasicInformationFormClinic() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [selectedOption, setSelectedOption] = useState("Masculino");
-  const [birthDate, setBirthDate] = useState("");
+  const [selectedOption, setSelectedOption] = useState(UserData.genero || "Masculino");
+  const [birthDate, setBirthDate] = useState(UserData.dataNascimento || "");
 
   const isValid = selectedOption && birthDate.length === 10;
 
   const handleNext = () => {
     if (!isValid) return;
+    
+    // --- INTEGRAÇÃO ---
+    UserData.genero = selectedOption;
+    UserData.dataNascimento = birthDate;
+    // ------------------
+
     router.push("/register/clinic/institutional-info");
   };
 
@@ -34,7 +42,7 @@ export default function BasicInformationFormClinic() {
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <View style={styles.formContainer}>
             <Text style={styles.title}>Olá! Queremos te conhecer melhor.</Text>
-            <Text style={styles.subtitle}>Agora vamos definir algumas informações básicas sobre você.</Text>
+            <Text style={styles.subtitle}>Agora vamos definir algumas informações básicas sobre o representante.</Text>
             <CustomSelect label="Qual opção melhor representa você?" value={selectedOption} options={GENDER_OPTIONS} onSelect={setSelectedOption} />
             <CustomDateInput label="Data de Nascimento" value={birthDate} onChangeText={setBirthDate} />
           </View>

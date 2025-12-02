@@ -18,14 +18,17 @@ import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { CustomDateInput } from "@/components/ui/CustomDateInput";
 
+// Lógica de Dados
+import { UserData } from "@/components/UserData";
+
 const GENDER_OPTIONS = ["Masculino", "Feminino", "Outro", "Prefiro não dizer"];
 
 export default function BasicInformationFormPacient() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [selectedOption, setSelectedOption] = useState("Masculino");
-  const [birthDate, setBirthDate] = useState("");
+  const [selectedOption, setSelectedOption] = useState(UserData.genero || "Masculino");
+  const [birthDate, setBirthDate] = useState(UserData.dataNascimento || "");
 
   // Validação simples: Data deve ter 10 caracteres (DD/MM/AAAA)
   const isValid = selectedOption && birthDate.length === 10;
@@ -33,9 +36,13 @@ export default function BasicInformationFormPacient() {
   const handleNext = () => {
     if (!isValid) return;
     
-    // Navegar para o Passo 3: Dados de Utilizador (Endereço/Senha)
+    // --- LÓGICA INTEGRADA: Salvar dados ---
+    UserData.genero = selectedOption;
+    UserData.dataNascimento = birthDate;
+    // --------------------------------------
+
+    // Navegar para o Passo 3: Dados de Utilizador
     router.push("/register/pacient/user-info");
-    // console.log("Navegar para UserInfo com:", { selectedOption, birthDate });
   };
 
   return (
